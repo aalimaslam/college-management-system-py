@@ -7,6 +7,7 @@ from modules.events import Event
 from modules.feedback import Feedback
 from modules.ai import generateResponse
 from modules.courses import Course
+from modules.analytics import Analytics
 
 class College:
     def __init__(self, db_name="college_management.db"):
@@ -19,7 +20,7 @@ class College:
         self.event = Event(self.db)
         self.feedback = Feedback(self.db)
         self.course = Course(self.db)
-        
+        self.analytics = Analytics(self.db)
     def close(self):
         """Close database connection"""
         self.db.close()
@@ -27,15 +28,18 @@ class College:
     def run_student_module(self):
         """Run the student management module"""
         while True:
-            print("\n===== STUDENT MANAGEMENT =====")
-            print("1. Add New Student")
-            print("2. Update Student")
-            print("3. Delete Student")
-            print("4. View Student")
-            print("5. View All Students")
-            print("6. Search Students")
-            print("0. Return to Main Menu")
-            
+            print("\n" + "="*60)
+            print(" " * 18 + "👨‍🎓 STUDENT MANAGEMENT 👨‍🎓")
+            print("="*60)
+            print(" 1. ➕ Add New Student")
+            print(" 2. ✏️  Update Student")
+            print(" 3. ❌ Delete Student")
+            print(" 4. 🔍 View Student")
+            print(" 5. 📋 View All Students")
+            print(" 6. 🔎 Search Students")
+            print(" 0. 🔙 Return to Main Menu")
+            print("="*60)
+
             choice = input("Enter your choice (0-6): ")
             
             if choice == '1':
@@ -178,183 +182,209 @@ class College:
     def run_teacher_module(self):
         """Run the teacher management module"""
         while True:
-            print("\n===== TEACHER MANAGEMENT =====")
-            print("1. Add New Teacher")
-            print("2. Update Teacher")
-            print("3. Delete Teacher")
-            print("4. View Teacher")
-            print("5. View All Teachers")
-            print("6. Search Teachers")
-            print("0. Return to Main Menu")
-            
+            print("\n" + "="*60)
+            print(" " * 18 + "👩‍🏫 TEACHER MANAGEMENT 👩‍🏫")
+            print("="*60)
+            print(" 1. ➕ Add New Teacher")
+            print(" 2. ✏️  Update Teacher")
+            print(" 3. ❌ Delete Teacher")
+            print(" 4. 🔍 View Teacher")
+            print(" 5. 📋 View All Teachers")
+            print(" 6. 🔎 Search Teachers")
+            print(" 0. 🔙 Return to Main Menu")
+            print("="*60)
+
             choice = input("Enter your choice (0-6): ")
-            
+
             if choice == '1':
-                name = input("Enter teacher name: ")
-                gender = input("Enter gender: ")
-                contact = input("Enter contact number: ")
-                email = input("Enter email: ")
-                department = input("Enter department: ")
-                qualification = input("Enter qualification: ")
-                
+                print("\n➕ Add New Teacher")
+                name = input("   👤 Name: ")
+                gender = input("   🚻 Gender: ")
+                contact = input("   📞 Contact Number: ")
+                email = input("   ✉️  Email: ")
+                department = input("   🏢 Department: ")
+                qualification = input("   🎓 Qualification: ")
                 self.teacher.add_teacher(name, gender, contact, email, department, qualification)
-            
+
             elif choice == '2':
-                teacher_id = int(input("Enter teacher ID to update: "))
+                print("\n✏️  Update Teacher")
+                teacher_id = int(input("   🆔 Enter teacher ID to update: "))
                 teacher_data = self.teacher.get_teacher(teacher_id)
-                
+
                 if teacher_data:
                     self.teacher.display_teacher(teacher_data)
-                    print("\nEnter new details (leave blank to keep current value):")
-                    
-                    name = input(f"Name [{teacher_data['name']}]: ") or None
-                    gender = input(f"Gender [{teacher_data['gender']}]: ") or None
-                    contact = input(f"Contact [{teacher_data['contact']}]: ") or None
-                    email = input(f"Email [{teacher_data['email']}]: ") or None
-                    department = input(f"Department [{teacher_data['department']}]: ") or None
-                    qualification = input(f"Qualification [{teacher_data['qualification']}]: ") or None
-                    
+                    print("\n   Enter new details (leave blank to keep current value):")
+                    name = input(f"   👤 Name [{teacher_data['name']}]: ") or None
+                    gender = input(f"   🚻 Gender [{teacher_data['gender']}]: ") or None
+                    contact = input(f"   📞 Contact [{teacher_data['contact']}]: ") or None
+                    email = input(f"   ✉️  Email [{teacher_data['email']}]: ") or None
+                    department = input(f"   🏢 Department [{teacher_data['department']}]: ") or None
+                    qualification = input(f"   🎓 Qualification [{teacher_data['qualification']}]: ") or None
                     self.teacher.update_teacher(
                         teacher_id, name=name, gender=gender, contact=contact,
                         email=email, department=department, qualification=qualification
                     )
-            
+
             elif choice == '3':
-                teacher_id = int(input("Enter teacher ID to delete: "))
-                confirm = input(f"Are you sure you want to delete teacher ID {teacher_id}? (y/n): ")
+                print("\n❌ Delete Teacher")
+                teacher_id = int(input("   🆔 Enter teacher ID to delete: "))
+                confirm = input(f"   Are you sure you want to delete teacher ID {teacher_id}? (y/n): ")
                 if confirm.lower() == 'y':
                     self.teacher.delete_teacher(teacher_id)
-            
+
             elif choice == '4':
-                teacher_id = int(input("Enter teacher ID to view: "))
+                print("\n🔍 View Teacher")
+                teacher_id = int(input("   🆔 Enter teacher ID to view: "))
                 teacher_data = self.teacher.get_teacher(teacher_id)
                 if teacher_data:
                     self.teacher.display_teacher(teacher_data)
-            
+
             elif choice == '5':
+                print("\n📋 View All Teachers")
                 teachers = self.teacher.get_all_teachers()
                 for teacher in teachers:
                     self.teacher.display_teacher(teacher)
-            
+
             elif choice == '6':
-                search_term = input("Enter search term: ")
+                print("\n🔎 Search Teachers")
+                search_term = input("   Enter search term: ")
                 teachers = self.teacher.search_teachers(search_term)
                 for teacher in teachers:
                     self.teacher.display_teacher(teacher)
-            
+
             elif choice == '0':
+                print("Returning to main menu...")
                 break
-            
+
             else:
-                print("Invalid choice. Please try again.")
+                print("❌ Invalid choice. Please try again.")
 
     def run_library_module(self):
         """Run the library management module"""
         while True:
-            print("\n===== LIBRARY MANAGEMENT =====")
-            print("1. Add New Book")
-            print("2. Update Book")
-            print("3. Delete Book")
-            print("4. View Book")
-            print("5. View All Books")
-            print("6. Search Books")
-            print("7. Issue Book")
-            print("8. Return Book")
-            print("0. Return to Main Menu")
-            
+            print("\n" + "="*60)
+            print(" " * 18 + "📚 LIBRARY MANAGEMENT 📚")
+            print("="*60)
+            print(" 1. ➕ Add New Book")
+            print(" 2. ✏️  Update Book")
+            print(" 3. ❌ Delete Book")
+            print(" 4. 🔍 View Book")
+            print(" 5. 📋 View All Books")
+            print(" 6. 🔎 Search Books")
+            print(" 7. 📤 Issue Book")
+            print(" 8. 📥 Return Book")
+            print(" 0. 🔙 Return to Main Menu")
+            print("="*60)
+
             choice = input("Enter your choice (0-8): ")
 
             if choice == '1':
-                title = input("Enter book title: ")
-                author = input("Enter author name: ")
-                isbn = input("Enter ISBN: ")
-                publisher = input("Enter publisher: ")
-                year = input("Enter publication year: ")
-                quantity = int(input("Enter quantity: "))
-
+                print("\n➕ Add New Book")
+                title = input("   📖 Title: ")
+                author = input("   👤 Author: ")
+                isbn = input("   🔢 ISBN: ")
+                publisher = input("   🏢 Publisher: ")
+                year = input("   📅 Publication Year: ")
+                quantity = int(input("   🔢 Quantity: "))
                 self.library.add_book(title, author, isbn, publisher, year, quantity)
 
             elif choice == '2':
-                book_id = int(input("Enter book ID to update: "))
+                print("\n✏️  Update Book")
+                book_id = int(input("   🆔 Enter book ID to update: "))
                 book_data = self.library.get_book(book_id)
-
                 if book_data:
                     self.library.display_book(book_data)
-                    print("\nEnter new details (leave blank to keep current value):")
-
-                    title = input(f"Title [{book_data['title']}]: ") or None
-                    author = input(f"Author [{book_data['author']}]: ") or None
-                    isbn = input(f"ISBN [{book_data['isbn']}]: ") or None
-                    publisher = input(f"Publisher [{book_data['publisher']}]: ") or None
-                    year = input(f"Year [{book_data['year']}]: ") or None
-                    quantity_str = input(f"Quantity [{book_data['quantity']}]: ") or None
+                    print("\n   Enter new details (leave blank to keep current value):")
+                    title = input(f"   📖 Title [{book_data['title']}]: ") or None
+                    author = input(f"   👤 Author [{book_data['author']}]: ") or None
+                    isbn = input(f"   🔢 ISBN [{book_data['isbn']}]: ") or None
+                    publisher = input(f"   🏢 Publisher [{book_data['publisher']}]: ") or None
+                    year = input(f"   📅 Year [{book_data['year']}]: ") or None
+                    quantity_str = input(f"   🔢 Quantity [{book_data['quantity']}]: ") or None
                     quantity = int(quantity_str) if quantity_str else None
-
                     self.library.update_book(
                         book_id, title=title, author=author, isbn=isbn,
                         publisher=publisher, year=year, quantity=quantity
                     )
 
             elif choice == '3':
-                book_id = int(input("Enter book ID to delete: "))
-                confirm = input(f"Are you sure you want to delete book ID {book_id}? (y/n): ")
+                print("\n❌ Delete Book")
+                book_id = int(input("   🆔 Enter book ID to delete: "))
+                confirm = input(f"   Are you sure you want to delete book ID {book_id}? (y/n): ")
                 if confirm.lower() == 'y':
                     self.library.delete_book(book_id)
 
             elif choice == '4':
-                book_id = int(input("Enter book ID to view: "))
+                print("\n🔍 View Book")
+                book_id = int(input("   🆔 Enter book ID to view: "))
                 book_data = self.library.get_book(book_id)
                 if book_data:
                     self.library.display_book(book_data)
 
             elif choice == '5':
+                print("\n📋 View All Books")
                 books = self.library.get_all_books()
                 for book in books:
                     self.library.display_book(book)
 
             elif choice == '6':
-                search_term = input("Enter search term: ")
+                print("\n🔎 Search Books")
+                search_term = input("   Enter search term: ")
                 books = self.library.search_books(search_term)
                 for book in books:
                     self.library.display_book(book)
 
             elif choice == '7':
-                book_id = int(input("Enter book ID to issue: "))
-                student_id = int(input("Enter student ID to issue to: "))
+                print("\n📤 Issue Book")
+                book_id = int(input("   🆔 Enter book ID to issue: "))
+                student_id = int(input("   👨‍🎓 Enter student ID to issue to: "))
                 self.library.issue_book(book_id, student_id)
 
             elif choice == '8':
-                book_id = int(input("Enter book ID to return: "))
-                student_id = int(input("Enter student ID returning the book: "))
+                print("\n📥 Return Book")
+                book_id = int(input("   🆔 Enter book ID to return: "))
+                student_id = int(input("   👨‍🎓 Enter student ID returning the book: "))
                 self.library.return_book(book_id, student_id)
 
             elif choice == '0':
+                print("Returning to main menu...")
                 break
 
             else:
-                print("Invalid choice. Please try again.")
+                print("❌ Invalid choice. Please try again.")
 
     def run_ai_module(self):
         """Run the AI module"""
         while True:
-            print("\n===== AI SPACE =====")
-            print("1. Run the AI Space")
-            print("0. Go Back")
-            choice  = input("Enter your choice (0-1) ")
+            print("\n" + "="*60)
+            print(" " * 22 + "🤖 AI SPACE 🤖")
+            print("="*60)
+            print(" 1. 🚀 Launch AI Assistant")
+            print(" 0. 🔙 Return to Main Menu")
+            print("="*60)
+
+            choice = input("Enter your choice (0-1): ")
 
             if choice == '1':
-                global response
-                prompt = input("Enter the details you want to know : ")
-                if(len(prompt) < 5):
-                    print('Enter more comprehensive prompt')
-                else : 
+                print("\n🚀 Welcome to the AI Assistant!")
+                print("Type your question or request below and let the AI help you.")
+                print("💡 Tip: The more detailed your prompt, the better the answer!\n")
+                prompt = input("📝 Your prompt: ")
+                if len(prompt.strip()) < 5:
+                    print("⚠️  Please enter a more comprehensive prompt to get a useful response.")
+                else:
+                    print("\n🤖 Thinking...\n")
                     response = generateResponse(prompt)
-                print(response)
+                    print("═" * 60)
+                    print("🔮 AI Response:")
+                    print(response)
+                    print("═" * 60)
             elif choice == '0':
+                print("Returning to main menu...")
                 break
-            else :
-                print("Invalid choice. Please try again.")
-    
+            else:
+                print("❌ Invalid choice. Please try again.")
+
     def run_event_module(self):
         """Run the event management module"""
         while True:
@@ -375,7 +405,8 @@ class College:
                 time = input("Enter event time (HH:MM): ")
                 venue = input("Enter venue: ")
                 description = input("Enter event description: ")
-                self.event.add_event(name, date, time, venue, description)
+                organizer = input("Enter event organizer : ")
+                self.event.add_event(name, date, time, venue, description, organizer)
 
             elif choice == '2':
                 event_id = int(input("Enter event ID to update: "))
@@ -587,3 +618,92 @@ class College:
                 break
             else:
                 print("Invalid choice. Please try again.")            
+
+    
+    def run_analytics_module(self):
+        """Run the analytics module"""
+        while True:
+            print("\n" + "="*60)
+            print(" " * 20 + "📊 ANALYTICS DASHBOARD 📊")
+            print("="*60)
+            print(" 1. 👨‍🎓 Total Students")
+            print(" 2. 📚 Students by Course")
+            print(" 3. 🚻 Students by Gender")
+            print(" 4. 📈 Student Enrollment Trends")
+            print(" 5. 📖 Total Courses")
+            print(" 6. 🌟 Course Popularity")
+            print(" 7. 👩‍🏫 Total Teachers")
+            print(" 8. 🏢 Teachers by Department")
+            print(" 9. 📗 Total Books")
+            print("10. 📕 Total Borrowed Books")
+            print("11. 🏆 Most Borrowed Books")
+            print("12. 🎉 Total Events")
+            print("13. ⏳ Upcoming Events")
+            print("14. ⭐ Average Feedback Rating by Course")
+            print("15. ⭐ Average Feedback Rating by Teacher")
+            print(" 0. 🔙 Return to Main Menu")
+            print("="*60)
+
+            choice = input("Enter your choice (0-15): ")
+
+            if choice == '1':
+                print(f"\n👨‍🎓 Total Students: {self.analytics.get_total_students()}")
+            elif choice == '2':
+                print("\n📚 Students by Course:")
+                for course, count in self.analytics.get_students_by_course().items():
+                    print(f"   - {course}: {count}")
+            elif choice == '3':
+                print("\n🚻 Students by Gender:")
+                for gender, count in self.analytics.get_students_by_gender().items():
+                    print(f"   - {gender}: {count}")
+            elif choice == '4':
+                print("\n📈 Student Enrollment Trends:")
+                for year, count in self.analytics.get_student_enrollment_trends().items():
+                    print(f"   - {year}: {count}")
+            elif choice == '5':
+                print(f"\n📖 Total Courses: {self.analytics.get_total_courses()}")
+            elif choice == '6':
+                print("\n🌟 Course Popularity:")
+                for course, count in self.analytics.get_course_popularity().items():
+                    print(f"   - {course}: {count}")
+            elif choice == '7':
+                print(f"\n👩‍🏫 Total Teachers: {self.analytics.get_total_teachers()}")
+            elif choice == '8':
+                print("\n🏢 Teachers by Department:")
+                for dept, count in self.analytics.get_teachers_by_department().items():
+                    print(f"   - {dept}: {count}")
+            elif choice == '9':
+                print(f"\n📗 Total Books: {self.analytics.get_total_books()}")
+            elif choice == '10':
+                print(f"\n📕 Total Borrowed Books: {self.analytics.get_total_borrowed_books()}")
+            elif choice == '11':
+                books = self.analytics.get_most_borrowed_books()
+                print("\n🏆 Most Borrowed Books:")
+                if books:
+                    for title, count in books:
+                        print(f"   - {title}: {count} times")
+                else:
+                    print("No borrowed books data.")
+            elif choice == '12':
+                print(f"\n🎉 Total Events: {self.analytics.get_total_events()}")
+            elif choice == '13':
+                events = self.analytics.get_upcoming_events()
+                print("\n⏳ Upcoming Events:")
+                if events:
+                    for name, date, venue in events:
+                        print(f"   - {name} on {date} at {venue}")
+                else:
+                    print("No upcoming events.")
+            elif choice == '14':
+                print("\n⭐ Average Feedback Rating by Course:")
+                for course, avg in self.analytics.get_average_feedback_rating_by_course().items():
+                    print(f"   - {course}: {avg}/5")
+            elif choice == '15':
+                print("\n⭐ Average Feedback Rating by Teacher:")
+                for teacher, avg in self.analytics.get_average_feedback_rating_by_teacher().items():
+                    print(f"   - {teacher}: {avg}/5")
+            elif choice == '0':
+                print("Returning to main menu...")
+                break
+            else:
+                print("❌ Invalid choice. Please try again.")

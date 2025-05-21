@@ -241,4 +241,21 @@ class Library:
                 return True
         
         return False
+    
+    def display_book(self, book_data):
+        """Display book information in a formatted way"""
+        if not book_data:
+            print("No book data to display.")
+            return
+
+        print("\n" + "="*50)
+        print(f"BOOK ID: {book_data['book_id']}")
+        print(f"Title: {book_data['title']}")
+        print(f"Author: {book_data['author']}")
+        print(f"ISBN: {book_data['isbn']}")
+        print(f"Publisher: {book_data['publisher']}")
+        print(f"Year Published: {book_data['year_published']}")
+        print(f"Total Copies: {book_data['total_copies']}")
+        print(f"Available Copies: {book_data['available_copies']}")
+        print("="*50 + "\n")
 

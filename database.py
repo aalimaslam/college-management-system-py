@@ -1,6 +1,5 @@
 
 import sqlite3
-import os
 
 class Database:
     def __init__(self, db_name="college_management.db"):
@@ -133,6 +132,7 @@ class Database:
             )
             ''')
 
+            # Courses table
             self.cursor.execute('''
             create table if not exists courses (
                                 course_id INTEGER PRIMARY KEY,

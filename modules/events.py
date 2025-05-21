@@ -26,18 +26,23 @@ class Event:
             print(f"Event '{name}' added successfully.")
             return True
         return False
-    
+
     def update_event(self, event_id, **kwargs):
         """Update event information"""
+        self.get_all_events()
         valid_fields = ['name', 'description', 'date', 'time', 'venue', 'organizer', 'status']
-        
-        # Filter out invalid fields
+
+        if 'organizer' in kwargs:
+            org = kwargs['organizer']
+            if org is None or str(org).strip() == '':
+                kwargs['organizer'] = None
+
         updates = {k: v for k, v in kwargs.items() if k in valid_fields and v is not None}
-        
+
         if not updates:
             print("No valid fields to update.")
             return False
-        
+
         # Validate date format if provided
         if 'date' in updates:
             try:
@@ -45,26 +50,27 @@ class Event:
             except ValueError:
                 print("Error: Date must be in YYYY-MM-DD format.")
                 return False
-        
+
         # Validate status if provided
         if 'status' in updates and updates['status'] not in ['upcoming', 'ongoing', 'completed', 'cancelled']:
             print("Error: Status must be one of 'upcoming', 'ongoing', 'completed', or 'cancelled'.")
             return False
-        
+
         # Construct update query
         set_clause = ", ".join([f"{field} = ?" for field in updates.keys()])
         query = f"UPDATE events SET {set_clause} WHERE event_id = ?"
-        
+
         # Parameters for the query
         params = list(updates.values()) + [event_id]
-        
+
+
         if self.db.execute_query(query, tuple(params)):
             print(f"Event ID {event_id} updated successfully.")
             return True
-        return False
-    
+        return False  
     def cancel_event(self, event_id):
         """Cancel an event"""
+        self.get_all_events()
         event = self.get_event(event_id)
         if not event:
             return False
@@ -86,6 +92,8 @@ class Event:
     def delete_event(self, event_id):
         """Delete an event from the database"""
         # Check if event exists
+        self.get_all_events()
+
         exists = self.db.fetch_one("SELECT event_id FROM events WHERE event_id = ?", (event_id,))
         if not exists:
             print(f"Error: Event with ID {event_id} does not exist.")
@@ -162,7 +170,7 @@ class Event:
         """Display event information in a formatted way"""
         if not event_data:
             return
-        
+
         print("\n" + "="*50)
         print(f"EVENT ID: {event_data['event_id']}")
         print(f"Name: {event_data['name']}")
@@ -170,7 +178,12 @@ class Event:
         print(f"Date: {event_data['date']}")
         print(f"Time: {event_data['time']}")
         print(f"Venue: {event_data['venue']}")
-        print(f"Organizer: {event_data['organizer']}")
+        # Fix: Handle missing or None organizer gracefully
+        organizer = event_data.get('organizer', '')
+        if organizer is None or str(organizer).strip() == '':
+            print("Organizer: Not specified")
+        else:
+            print(f"Organizer: {organizer}")
         print(f"Status: {event_data['status']}")
         print("="*50 + "\n")
     
