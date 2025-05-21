@@ -36,6 +36,15 @@ class Library:
         if not updates:
             print("No valid fields to update.")
             return False
+
+        # Check if book_id exists before trying to update further
+        # Note: self.get_book() will be called again if 'total_copies' is in updates.
+        # This initial check is for general existence.
+        initial_book_check = self.get_book(book_id)
+        if not initial_book_check:
+            # get_book already prints an error if not found, so just return False
+            return False
+            return False
         
         # Special handling for total_copies to adjust available_copies accordingly
         if 'total_copies' in updates:
@@ -120,7 +129,7 @@ class Library:
         """Search for books by title, author, or ISBN"""
         query = """
         SELECT * FROM books 
-        WHERE title ILIKE ? OR author ILIKE ? OR isbn ILIKE ? OR publisher ILIKE ?
+        WHERE LOWER(title) LIKE LOWER(?) OR LOWER(author) LIKE LOWER(?) OR LOWER(isbn) LIKE LOWER(?) OR LOWER(publisher) LIKE LOWER(?)
         ORDER BY title
         """
         search_pattern = f"%{search_term}%"
@@ -164,21 +173,22 @@ class Library:
             return False
         
         # Issue the book
+        # Directly create string dates using the (mocked) datetime.datetime.now()
         issue_date = datetime.datetime.now().strftime("%Y-%m-%d")
         return_date = (datetime.datetime.now() + datetime.timedelta(days=14)).strftime("%Y-%m-%d")
-        
+
         query = """
         INSERT INTO book_issues (book_id, student_id, issue_date, return_date, status)
         VALUES (?, ?, ?, ?, 'issued')
         """
-        params = (book_id, student_id, issue_date, return_date)
+        params = (book_id, student_id, str(issue_date), str(return_date)) # Explicitly cast to str for paranoia
         
         if self.db.execute_query(query, params):
             # Update available copies
             update_query = "UPDATE books SET available_copies = available_copies - 1 WHERE book_id = ?"
             if self.db.execute_query(update_query, (book_id,)):
                 print(f"Book '{book['title']}' issued to student ID {student_id} successfully.")
-                print(f"Return Date: {return_date}")
+                print(f"Return Date: {return_date}") # Corrected variable name
                 return True
         
         return False

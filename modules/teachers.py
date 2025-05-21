@@ -37,6 +37,12 @@ class Teacher:
         if not updates:
             print("No valid fields to update.")
             return False
+
+        # Check if teacher_id exists before trying to update
+        check_exists = self.db.fetch_one("SELECT teacher_id FROM teachers WHERE teacher_id = ?", (teacher_id,))
+        if not check_exists:
+            print(f"Error: Teacher with ID {teacher_id} does not exist. Cannot update.")
+            return False
         
         # Construct update query
         set_clause = ", ".join([f"{field} = ?" for field in updates.keys()])
@@ -96,7 +102,7 @@ class Teacher:
         """Search for teachers by name, email, department, or qualification"""
         query = """
         SELECT * FROM teachers 
-        WHERE name ILIKE ? OR email ILIKE ? OR department ILIKE ? OR qualification ILIKE ?
+        WHERE LOWER(name) LIKE LOWER(?) OR LOWER(email) LIKE LOWER(?) OR LOWER(department) LIKE LOWER(?) OR LOWER(qualification) LIKE LOWER(?)
         ORDER BY name
         """
         search_pattern = f"%{search_term}%"

@@ -9,7 +9,8 @@ class Database:
         self.conn = None
         self.cursor = None
         self.connect()
-        self.create_tables()
+        if self.conn: # Only create tables if connection was successful
+            self.create_tables()
     
     def connect(self):
         """Connect to the SQLite database"""
@@ -24,6 +25,8 @@ class Database:
         """Close the database connection"""
         if self.conn:
             self.conn.close()
+            self.conn = None      # Set conn to None after closing
+            self.cursor = None    # Set cursor to None after closing
             print("Database connection closed.")
     
     def create_tables(self):
