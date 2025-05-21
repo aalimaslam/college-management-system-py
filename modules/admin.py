@@ -34,6 +34,12 @@ class Administrator:
         if not updates:
             print("No valid fields to update.")
             return False
+
+        # Check if admin_id exists before trying to update
+        check_exists = self.db.fetch_one("SELECT admin_id FROM administrators WHERE admin_id = ?", (admin_id,))
+        if not check_exists:
+            print(f"Error: Administrator with ID {admin_id} does not exist. Cannot update.")
+            return False
         
         # Construct update query
         set_clause = ", ".join([f"{field} = ?" for field in updates.keys()])
@@ -91,7 +97,7 @@ class Administrator:
         """Search for administrators by name, email, position, or department"""
         query = """
         SELECT * FROM administrators 
-        WHERE name ILIKE ? OR email ILIKE ? OR position ILIKE ? OR department ILIKE ?
+        WHERE LOWER(name) LIKE LOWER(?) OR LOWER(email) LIKE LOWER(?) OR LOWER(position) LIKE LOWER(?) OR LOWER(department) LIKE LOWER(?)
         ORDER BY name
         """
         search_pattern = f"%{search_term}%"

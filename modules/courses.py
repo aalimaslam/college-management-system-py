@@ -69,8 +69,16 @@ class Course:
             print(f"No course found with ID {course_id}.")
             return None
 
-        columns = ["course_id", "course_name", "description"]
-        return dict(zip(columns, course))
+        # Align dictionary keys with the actual database schema: course_id, title, description, duration
+        columns = ["course_id", "title", "description", "duration"]
+        # The 'course' tuple fetched from DB has 4 elements: (id, title, desc, duration)
+        # Ensure the number of columns matches the fetched tuple elements.
+        if len(course) == len(columns):
+            return dict(zip(columns, course))
+        else:
+            # This case should ideally not happen if DB schema and query are consistent
+            print(f"Error: Mismatch between fetched course data length and expected columns for course_id {course_id}.")
+            return None # Or handle error appropriately
 
     def get_all_courses(self):
         """List all courses"""
